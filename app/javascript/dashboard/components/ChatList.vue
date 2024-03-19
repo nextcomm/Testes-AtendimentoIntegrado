@@ -313,6 +313,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      currentUserRole: 'getCurrentRole',
       currentChat: 'getSelectedChat',
       currentUser: 'getCurrentUser',
       chatLists: 'getAllConversations',
@@ -363,11 +364,16 @@ export default {
       };
     },
     assigneeTabItems() {
+      // console.table(this.teamsList);
       const ASSIGNEE_TYPE_TAB_KEYS = {
         me: 'mineCount',
         unassigned: 'unAssignedCount',
-        all: 'allCount',
+        // all: 'allCount',
       };
+      const isAvailableForTheUser = this.currentUserRole === 'administrator';
+      if (isAvailableForTheUser) {
+        ASSIGNEE_TYPE_TAB_KEYS.all = 'allCount';
+      }
       return Object.keys(ASSIGNEE_TYPE_TAB_KEYS).map(key => {
         const count = this.conversationStats[ASSIGNEE_TYPE_TAB_KEYS[key]] || 0;
         return {
@@ -474,7 +480,9 @@ export default {
     conversationList() {
       let conversationList = [];
       if (!this.hasAppliedFiltersOrActiveFolders) {
+        // o n sole.log('USER:  ' + this.currentUser.role);
         const filters = this.conversationFilters;
+        // n s ole.table('FILTROS:  ', filters);
         if (this.activeAssigneeTab === 'me') {
           conversationList = [...this.mineChatsList(filters)];
         } else if (this.activeAssigneeTab === 'unassigned') {
@@ -606,11 +614,12 @@ export default {
       this.showDeleteFoldersModal = false;
     },
     onToggleAdvanceFiltersModal() {
-      if (!this.hasAppliedFilters && !this.hasActiveFolders) {
-        this.initializeExistingFilterToModal();
+      if (this.currentUserRole === 'agent') {
+        this.showAdvancedFilters = false;
+        return;
       }
-      if (this.hasActiveFolders) {
-        this.initializeFolderToFilterModal(this.activeFolder);
+      if (!this.hasAppliedFilters) {
+        this.initializeExistingFilterToModal();
       }
       this.showAdvancedFilters = true;
     },

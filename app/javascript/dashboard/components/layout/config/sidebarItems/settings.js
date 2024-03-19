@@ -71,6 +71,7 @@ const settings = accountId => ({
       toState: frontendURL(`accounts/${accountId}/settings/inboxes/list`),
       toStateName: 'settings_inbox_list',
       featureFlag: FEATURE_FLAGS.INBOX_MANAGEMENT,
+      roles: ['administrator'],
     },
     {
       icon: 'tag',

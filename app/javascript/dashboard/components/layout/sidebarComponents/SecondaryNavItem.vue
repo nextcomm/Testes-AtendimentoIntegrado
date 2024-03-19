@@ -118,6 +118,7 @@ export default {
     ...mapGetters({
       activeInbox: 'getSelectedInbox',
       accountId: 'getCurrentAccountId',
+      currentUser: 'getCurrentUser',
       isFeatureEnabledonAccount: 'accounts/isFeatureEnabledonAccount',
       globalConfig: 'globalConfig/get',
     }),
@@ -131,6 +132,20 @@ export default {
       return !!this.menuItem.children;
     },
     isMenuItemVisible() {
+      if (
+        this.currentUser.role !== 'administrator' &&
+        this.menuItem.label === 'INBOXES'
+      ) {
+        return false; // Oculta o item de menu 'INBOXES'
+      }
+      if (this.menuItem.roles && this.menuItem.roles.length > 0) {
+        // Verifica se o papel do usuário atual está presente nos papéis permitidos do item de menu
+        if (this.menuItem.roles.includes(this.currentUser.role)) {
+          return true; // Se estiver presente, exibe o item de menu
+        }
+        return false; // Se não estiver presente, oculta o item de menu
+      }
+      // Se não houver restrições de papel, prossegue com as outras verificações
       if (this.menuItem.globalConfigFlag) {
         return !!this.globalConfig[this.menuItem.globalConfigFlag];
       }
@@ -142,20 +157,26 @@ export default {
       }
       return true;
     },
+    isAgentRole() {
+      return this.currentUser.role === 'administrator';
+    },
     isAllConversations() {
       return (
+        this.isAgentRole &&
         this.$store.state.route.name === 'inbox_conversation' &&
         this.menuItem.toStateName === 'home'
       );
     },
     isMentions() {
       return (
+        this.isAgentRole &&
         isOnMentionsView({ route: this.$route }) &&
         this.menuItem.toStateName === 'conversation_mentions'
       );
     },
     isUnattended() {
       return (
+        this.isAgentRole &&
         isOnUnattendedView({ route: this.$route }) &&
         this.menuItem.toStateName === 'conversation_unattended'
       );
@@ -213,6 +234,12 @@ export default {
 
       return 'hover:text-slate-700 dark:hover:text-slate-100';
     },
+  },
+  mounted() {
+    if (this.menuItem.label === 'TEAMS') {
+      const toState = this.menuItem.children[0].toState;
+      this.$emit('team-state', toState);
+    }
   },
   methods: {
     computedInboxClass(child) {

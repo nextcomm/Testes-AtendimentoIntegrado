@@ -8559,20 +8559,10 @@ caniuse-api@^3.0.0:
     lodash.memoize "^4.1.2"
     lodash.uniq "^4.5.0"
 
-caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001214:
-  version "1.0.30001494"
-  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001494.tgz"
-  integrity sha512-sY2B5Qyl46ZzfYDegrl8GBCzdawSLT4ThM9b9F+aDYUrAG2zCOyMbd2Tq34mS1g4ZKBfjRlzOohQMxx28x6wJg==
-
-caniuse-lite@^1.0.30001449, caniuse-lite@^1.0.30001517, caniuse-lite@^1.0.30001538:
-  version "1.0.30001538"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001538.tgz#9dbc6b9af1ff06b5eb12350c2012b3af56744f3f"
-  integrity sha512-HWJnhnID+0YMtGlzcp3T9drmBJUVDchPJ08tpUGFLs9CYlwWPH2uLgpHn8fND5pCgXVtnGS3H4QR9XLMHVNkHw==
-
-caniuse-lite@^1.0.30001503:
-  version "1.0.30001507"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001507.tgz#fae53f6286e7564783eadea9b447819410a59534"
-  integrity sha512-SFpUDoSLCaE5XYL2jfqe9ova/pbQHEmbheDf5r4diNwbAgR3qxM9NQtfsiSscjqoya5K7kFcHPUQ+VsUkIJR4A==
+caniuse-lite@^1.0.0, caniuse-lite@^1.0.30000981, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001214, caniuse-lite@^1.0.30001449, caniuse-lite@^1.0.30001503, caniuse-lite@^1.0.30001517, caniuse-lite@^1.0.30001538:
+  version "1.0.30001599"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001599.tgz"
+  integrity sha512-LRAQHZ4yT1+f9LemSMeqdMpMxZcc4RMWdj4tiFe3G8tNkWK+E58g+/tzotb5cU6TbcVJLr4fySiAW7XmxQvZQA==
 
 capture-exit@^2.0.0:
   version "2.0.0"
@@ -14357,7 +14347,7 @@ lodash.uniq@4.5.0, lodash.uniq@^4.5.0:
   resolved "https://registry.yarnpkg.com/lodash.uniq/-/lodash.uniq-4.5.0.tgz#d0225373aeb652adc1bc82e4945339a842754773"
   integrity sha1-0CJTc662Uq3BvILklFM5qEJ1R3M=
 
-lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.5, lodash@^4.7.0:
+lodash@^4.13.0, lodash@^4.17.11, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.20, lodash@^4.17.21, lodash@^4.17.5, lodash@^4.7.0:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
@@ -18228,6 +18218,13 @@ rsvp@^4.8.4:
   version "4.8.5"
   resolved "https://registry.yarnpkg.com/rsvp/-/rsvp-4.8.5.tgz#c8f155311d167f68f21e168df71ec5b083113734"
   integrity sha512-nfMOlASu9OnRJo1mbEk2cz0D56a1MBNrJ7orjRZQG10XDyuvwksKbuXNp6qa+kbn839HwjwhBzhFmdsaEAfauA==
+
+ruby@^0.6.1:
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/ruby/-/ruby-0.6.1.tgz#b3fee5787e4f9c0d5814d6166a5b5dbcfb24ba35"
+  integrity sha512-TjMB+HyxathhcgvtQ3jkYWWjW3t9q+3VPLe0jpsm1x8tryXJ3626rO6gQ+0S12Oyac+Glp6KDuy1JBdKND+eSQ==
+  dependencies:
+    lodash "^4.13.0"
 
 run-applescript@^5.0.0:
   version "5.0.0"
