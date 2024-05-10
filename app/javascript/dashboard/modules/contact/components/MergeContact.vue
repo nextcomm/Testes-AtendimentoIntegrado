@@ -10,7 +10,7 @@
             {{ $t('MERGE_CONTACTS.PARENT.TITLE') }}
             <woot-label
               :title="$t('MERGE_CONTACTS.PARENT.HELP_LABEL')"
-              color-scheme="success"
+              color-scheme="primary"
               small
               class="ml-2"
             />

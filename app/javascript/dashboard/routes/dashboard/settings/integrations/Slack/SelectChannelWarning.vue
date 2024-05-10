@@ -63,7 +63,7 @@
         <woot-submit-button
           button-class="smooth small success"
           :button-text="$t('INTEGRATION_SETTINGS.SLACK.SELECT_CHANNEL.UPDATE')"
-          spinner-class="success"
+          spinner-class="primary"
           :loading="uiFlags.isUpdatingSlack"
           @click="updateIntegration"
         />

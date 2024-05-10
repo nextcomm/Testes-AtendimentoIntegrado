@@ -69,7 +69,7 @@
             {{ $t('INBOX_MGMT.FINISH.MORE_SETTINGS') }}
           </router-link>
           <router-link
-            class="button success rounded"
+            class="button primary rounded"
             :to="{
               name: 'inbox_dashboard',
               params: { inboxId: $route.params.inbox_id },
