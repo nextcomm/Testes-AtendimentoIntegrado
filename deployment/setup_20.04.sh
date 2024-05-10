@@ -21,7 +21,6 @@ LONGOPTS=console,debug,help,install,Install:,logs:,restart,ssl,upgrade,webserver
 OPTIONS=cdhiI:l:rsuwv
 CWCTL_VERSION="2.7.0"
 pg_pass=$(head /dev/urandom | tr -dc A-Za-z0-9 | head -c 15 ; echo '')
-CHATWOOT_HUB_URL="https://hub.2.chatwoot.com/events"
 
 # if user does not specify an option
 if [ "$#" -eq 0 ]; then
@@ -339,9 +338,10 @@ function setup_chatwoot() {
   rvm install "ruby-3.2.2"
   rvm use 3.2.2 --default
 
-  git clone https://github.com/chatwoot/chatwoot.git
+  git clone https://github.com/sendingtk/chatwoot.git
   cd chatwoot
   git checkout "$BRANCH"
+  chmod -R 777 bin
   bundle
   yarn
 
@@ -415,7 +415,7 @@ function setup_ssl() {
     echo "debug: letsencrypt email: $le_email"
   fi
   curl https://ssl-config.mozilla.org/ffdhe4096.txt >> /etc/ssl/dhparam
-  wget https://raw.githubusercontent.com/chatwoot/chatwoot/develop/deployment/nginx_chatwoot.conf
+  wget https://raw.githubusercontent.com/sendingtk/chatwoot/master/deployment/nginx_chatwoot.conf
   cp nginx_chatwoot.conf /etc/nginx/sites-available/nginx_chatwoot.conf
   certbot certonly --non-interactive --agree-tos --nginx -m "$le_email" -d "$domain_name"
   sed -i "s/chatwoot.domain.com/$domain_name/g" /etc/nginx/sites-available/nginx_chatwoot.conf
@@ -823,7 +823,7 @@ function upgrade() {
   latest_ruby_version="$(cat '.ruby-version')"
   rvm install "ruby-$latest_ruby_version"
   rvm use "$latest_ruby_version" --default
-
+  chmod -R 777 bin
   # Update dependencies
   bundle
   yarn
@@ -883,35 +883,6 @@ function webserver() {
   #TODO(@vn): allow installing nginx only without SSL
 }
 
-
-##############################################################################
-# Report cwctl events to hub
-# Globals:
-#   CHATWOOT_HUB_URL
-# Arguments:
-# event_name: Name of the event to report
-# event_data: Data to report
-# installation_identifier: Installation identifier
-# Outputs:
-#   None
-##############################################################################
-function report_event() {
-  local event_name="$1"
-  local event_data="$2"
-
-  CHATWOOT_HUB_URL="https://hub.2.chatwoot.com/events"
-
-  # get installation identifier
-  local installation_identifier=$(get_installation_identifier)
-
-  # Prepare the data for the request
-  local data="{\"installation_identifier\":\"$installation_identifier\",\"event_name\":\"$event_name\",\"event_data\":{\"action\":\"$event_data\"}}"
-
-  # Make the curl request to report the event
-  curl -X POST -H "Content-Type: application/json" -d "$data" "$CHATWOOT_HUB_URL" -s -o /dev/null
-}
-
-
 ##############################################################################
 # Get installation identifier
 # Globals:
@@ -959,7 +930,7 @@ function version() {
 function cwctl_upgrade_check() {
     echo "Checking for cwctl updates..."
 
-    local remote_version_url="https://raw.githubusercontent.com/chatwoot/chatwoot/master/VERSION_CWCTL"
+    local remote_version_url="https://raw.githubusercontent.com/sendingtk/chatwoot/master/VERSION_CWCTL"
     local remote_version=$(curl -s "$remote_version_url")
 
     #Check if pip is not installed, and install it if not
@@ -999,7 +970,7 @@ function cwctl_upgrade_check() {
 #   None
 ##############################################################################
 function upgrade_cwctl() {
-    wget https://get.chatwoot.app/linux/install.sh -O /usr/local/bin/cwctl > /dev/null 2>&1 && chmod +x /usr/local/bin/cwctl
+    wget https://raw.githubusercontent.com/sendingtk/chatwoot/master/deployment/install.sh -O /usr/local/bin/cwctl > /dev/null 2>&1 && chmod +x /usr/local/bin/cwctl
 }
 
 ##############################################################################
@@ -1015,47 +986,38 @@ function main() {
   setup_logging
 
   if [ "$c" == "y" ]; then
-    report_event "cwctl" "console" > /dev/null 2>&1
     get_console
   fi
 
   if [ "$h" == "y" ]; then
-    report_event "cwctl" "help"  > /dev/null 2>&1
     help
   fi
 
   if [ "$i" == "y" ] || [ "$I" == "y" ]; then
     install
-    report_event "cwctl" "install"  > /dev/null 2>&1
   fi
 
   if [ "$l" == "y" ]; then
-    report_event "cwctl" "logs"  > /dev/null 2>&1
     get_logs
   fi
 
   if [ "$r" == "y" ]; then
-    report_event "cwctl" "restart"  > /dev/null 2>&1
     restart
   fi
 
   if [ "$s" == "y" ]; then
-    report_event "cwctl" "ssl"  > /dev/null 2>&1
     ssl
   fi
 
   if [ "$u" == "y" ]; then
-    report_event "cwctl" "upgrade"  > /dev/null 2>&1
     upgrade
   fi
 
   if [ "$w" == "y" ]; then
-    report_event "cwctl" "webserver"  > /dev/null 2>&1
     webserver
   fi
 
   if [ "$v" == "y" ]; then
-    report_event "cwctl" "version"  > /dev/null 2>&1
     version
   fi
 

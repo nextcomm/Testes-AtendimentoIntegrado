@@ -36,10 +36,18 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
     end
   end
 
+  def update
+    @conversation.update!(permitted_update_params)
+  end
+
   def filter
     result = ::Conversations::FilterService.new(params.permit!, current_user).perform
     @conversations = result[:conversations]
     @conversations_count = result[:count]
+  rescue CustomExceptions::CustomFilter::InvalidAttribute,
+         CustomExceptions::CustomFilter::InvalidOperator,
+         CustomExceptions::CustomFilter::InvalidValue => e
+    render_could_not_create_error(e.message)
   end
 
   def mute
@@ -110,8 +118,14 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
 
   private
 
+  def permitted_update_params
+    # TODO: Move the other conversation attributes to this method and remove specific endpoints for each attribute
+    params.permit(:priority)
+  end
+
   def update_last_seen_on_conversation(last_seen_at, update_assignee)
     # rubocop:disable Rails/SkipsModelValidations
+    # send activity do view conversation
     @conversation.update_column(:agent_last_seen_at, last_seen_at)
     @conversation.update_column(:assignee_last_seen_at, last_seen_at) if update_assignee.present?
     # rubocop:enable Rails/SkipsModelValidations
@@ -176,3 +190,5 @@ class Api::V1::Accounts::ConversationsController < Api::V1::Accounts::BaseContro
     @conversation.assignee_id? && Current.user == @conversation.assignee
   end
 end
+
+Api::V1::Accounts::ConversationsController.prepend_mod_with('Api::V1::Accounts::ConversationsController')

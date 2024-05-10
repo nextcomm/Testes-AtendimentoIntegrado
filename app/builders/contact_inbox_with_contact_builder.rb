@@ -15,7 +15,10 @@ class ContactInboxWithContactBuilder
 
   def find_or_create_contact_and_contact_inbox
     @contact_inbox = inbox.contact_inboxes.find_by(source_id: source_id) if source_id.present?
-    return @contact_inbox if @contact_inbox
+    if @contact_inbox
+      update_contact_avatar(@contact_inbox.contact) unless @contact_inbox.contact.avatar.attached?
+      return @contact_inbox
+    end
 
     ActiveRecord::Base.transaction(requires_new: true) do
       build_contact_with_contact_inbox
@@ -45,7 +48,8 @@ class ContactInboxWithContactBuilder
   end
 
   def update_contact_avatar(contact)
-    ::Avatar::AvatarFromUrlJob.perform_later(contact, contact_attributes[:avatar_url]) if contact_attributes[:avatar_url]
+    # ::Avatar::AvatarFromUrlJob.perform_later(contact, contact_attributes[:avatar_url]) if contact_attributes[:avatar_url]
+    ::Avatar::AvatarFromUrlJob.set(wait: 30.seconds).perform_later(contact, contact_attributes[:avatar_url]) if contact_attributes[:avatar_url]
   end
 
   def create_contact
@@ -75,7 +79,7 @@ class ContactInboxWithContactBuilder
   def find_contact_by_email(email)
     return if email.blank?
 
-    account.contacts.find_by(email: email.downcase)
+    account.contacts.from_email(email)
   end
 
   def find_contact_by_phone_number(phone_number)

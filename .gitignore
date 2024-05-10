@@ -60,6 +60,7 @@ test/cypress/videos/*
 
 /config/master.key
 /config/*.enc
+/config/*.pem
 
 #ignore files under .vscode directory
 .vscode
@@ -67,8 +68,7 @@ test/cypress/videos/*
 # yalc for local testing
 .yalc
 yalc.lock
-sys/fs/bpf/
-/proc
+
 /public/packs
 /public/packs-test
 /node_modules

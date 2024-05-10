@@ -2,7 +2,9 @@
   <li v-if="shouldRenderMessage" :id="`message${data.id}`" :class="alignBubble">
     <div :class="wrapClass">
       <div
-        v-if="isFailed && !hasOneDayPassed && !isAnEmailInbox"
+        v-if="
+          isFailed && !data.source_id && !hasOneDayPassed && !isAnEmailInbox
+        "
         class="message-failed--alert"
       >
         <woot-button
@@ -31,6 +33,7 @@
           :message="inReplyTo"
           :message-type="data.message_type"
           :parent-has-attachments="hasAttachments"
+          @click="navigateToMessage"
         />
         <div v-if="isUnsupported">
           <template v-if="isAFacebookInbox && isInstagram">
@@ -551,6 +554,13 @@ export default {
         this.showBackgroundHighlight = false;
       }, HIGHLIGHT_TIMER);
     },
+    async navigateToMessage() {
+      this.$nextTick(() => {
+        bus.$emit(BUS_EVENTS.SCROLL_TO_MESSAGE, {
+          messageId: this.inReplyToMessageId,
+        });
+      });
+    },
   },
 };
 </script>
@@ -577,7 +587,8 @@ export default {
 
         > img,
         > video {
-          @apply rounded-lg;
+          /** ensure that the bubble radius and image radius match*/
+          @apply rounded-[0.4rem];
         }
 
         > video {
@@ -600,8 +611,8 @@ export default {
         @apply text-woot-400 dark:text-woot-400;
       }
 
-      .text-block-title {
-        @apply text-slate-700 dark:text-slate-700;
+      .attachment-name {
+        @apply text-slate-700 dark:text-slate-200;
       }
 
       .download.button {

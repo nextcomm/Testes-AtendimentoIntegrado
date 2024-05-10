@@ -3,8 +3,8 @@ source 'https://rubygems.org'
 ruby '3.2.2'
 
 ##-- base gems for rails --##
-gem 'rack-cors', require: 'rack/cors'
-gem 'rails', '~> 7.0.8.0'
+gem 'rack-cors', '2.0.0', require: 'rack/cors'
+gem 'rails', '~> 7.0.8.1'
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
 
@@ -69,7 +69,7 @@ gem 'webpacker'
 gem 'barnes'
 
 ##--- gems for authentication & authorization ---##
-gem 'devise', '>= 4.9.3'
+gem 'devise', '>= 4.9.4'
 gem 'devise-secure_password', git: 'https://github.com/chatwoot/devise-secure_password', branch: 'chatwoot'
 gem 'devise_token_auth'
 # authorization
@@ -155,6 +155,8 @@ gem 'stripe'
 ## to populate db with sample data
 gem 'faker'
 
+gem 'phonelib'
+
 # Include logrange conditionally in intializer using env variable
 gem 'lograge', '~> 0.14.0', require: false
 
@@ -165,7 +167,7 @@ gem 'audited', '~> 5.4', '>= 5.4.1'
 
 # need for google auth
 gem 'omniauth', '>= 2.1.2'
-gem 'omniauth-google-oauth2'
+gem 'omniauth-google-oauth2', '>= 1.1.2'
 gem 'omniauth-rails_csrf_protection', '~> 1.0'
 
 ## Gems for reponse bot
@@ -203,7 +205,7 @@ group :development do
   gem 'rack-mini-profiler', '>= 3.2.0', require: false
   gem 'stackprof'
   # Should install the associated chrome extension to view query logs
-  gem 'meta_request'
+  gem 'meta_request', '>= 0.8.0'
 end
 
 group :test do

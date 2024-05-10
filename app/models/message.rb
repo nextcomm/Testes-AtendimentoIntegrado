@@ -92,7 +92,7 @@ class Message < ApplicationRecord
     integrations: 10,
     sticker: 11
   }
-  enum status: { sent: 0, delivered: 1, read: 2, failed: 3 }
+  enum status: { progress: -1, sent: 0, delivered: 1, read: 2, failed: 3 }
   # [:submitted_email, :items, :submitted_values] : Used for bot message types
   # [:email] : Used by conversation_continuity incoming email messages
   # [:in_reply_to] : Used to reply to a particular tweet in threads
@@ -106,6 +106,11 @@ class Message < ApplicationRecord
   store :external_source_ids, accessors: [:slack], coder: JSON, prefix: :external_source_id
 
   scope :created_since, ->(datetime) { where('created_at > ?', datetime) }
+  # .succ is a hack to avoid https://makandracards.com/makandra/1057-why-two-ruby-time-objects-are-not-equal-although-they-appear-to-be
+  scope :unread_since, ->(datetime) { where('EXTRACT(EPOCH FROM created_at) > (?)', datetime.to_i.succ) }
+  scope :to_read, lambda { |datetime|
+    where('EXTRACT(EPOCH FROM updated_at) <= (?) and message_type = 0 and status < 2', datetime.to_i.succ)
+  }
   scope :chat, -> { where.not(message_type: :activity).where(private: false) }
   scope :non_activity_messages, -> { where.not(message_type: :activity).reorder('id desc') }
   scope :today, -> { where("date_trunc('day', created_at) = ?", Date.current) }
@@ -118,7 +123,7 @@ class Message < ApplicationRecord
   belongs_to :account
   belongs_to :inbox
   belongs_to :conversation, touch: true
-  belongs_to :sender, polymorphic: true, optional: true
+  belongs_to :sender, polymorphic: true, required: false
 
   has_many :attachments, dependent: :destroy, autosave: true, before_add: :validate_attachments_limit
   has_one :csat_survey_response, dependent: :destroy_async
@@ -139,8 +144,8 @@ class Message < ApplicationRecord
       conversation_id: conversation.display_id,
       conversation: conversation_push_event_data
     )
-    data[:echo_id] = echo_id if echo_id.present?
-    data[:attachments] = attachments.map(&:push_event_data) if attachments.present?
+    data.merge!(echo_id: echo_id) if echo_id.present?
+    data.merge!(attachments: attachments.map(&:push_event_data)) if attachments.present?
     merge_sender_attributes(data)
   end
 
@@ -163,9 +168,13 @@ class Message < ApplicationRecord
   end
 
   def merge_sender_attributes(data)
-    data[:sender] = sender.push_event_data if sender && !sender.is_a?(AgentBot)
-    data[:sender] = sender.push_event_data(inbox) if sender.is_a?(AgentBot)
+    data.merge!(sender: sender.push_event_data) if sender && !sender.is_a?(AgentBot)
+    data.merge!(sender: sender.push_event_data(inbox)) if sender.is_a?(AgentBot)
     data
+  end
+
+  def sender_name
+    sender&.try(:available_name) || sender&.try(:name)
   end
 
   def webhook_data
@@ -180,11 +189,12 @@ class Message < ApplicationRecord
       id: id,
       inbox: inbox.webhook_data,
       message_type: message_type,
+      status: status,
       private: private,
       sender: sender.try(:webhook_data),
       source_id: source_id
     }
-    data[:attachments] = attachments.map(&:push_event_data) if attachments.present?
+    data.merge!(attachments: attachments.map(&:push_event_data)) if attachments.present?
     data
   end
 

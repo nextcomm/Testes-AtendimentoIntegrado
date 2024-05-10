@@ -1,6 +1,6 @@
 <template>
   <form
-    class="contact--form w-full pt-6 px-8 pb-8"
+    class="w-full px-8 pt-6 pb-8 contact--form"
     @submit.prevent="handleSubmit"
   >
     <div>
@@ -76,7 +76,7 @@
         </label>
         <div
           v-if="isPhoneNumberNotValid || !phoneNumber"
-          class="callout small warning text-sm dark:bg-yellow-200/20 dark:text-yellow-400"
+          class="relative mx-0 mt-0 mb-2.5 p-2 rounded-md text-sm border border-solid border-yellow-500 text-yellow-700 dark:border-yellow-700 bg-yellow-200/60 dark:bg-yellow-200/20 dark:text-yellow-400"
         >
           {{ $t('CONTACT_FORM.FORM.PHONE_NUMBER.HELP') }}
         </div>
@@ -121,17 +121,20 @@
       <div
         v-for="socialProfile in socialProfileKeys"
         :key="socialProfile.key"
-        class="input-group"
+        class="flex items-stretch w-full mb-4"
       >
-        <span class="input-group-label">{{ socialProfile.prefixURL }}</span>
+        <span
+          class="flex items-center h-10 px-2 text-sm border-solid bg-slate-50 border-y ltr:border-l rtl:border-r ltr:rounded-l-md rtl:rounded-r-md dark:bg-slate-700 text-slate-800 dark:text-slate-100 border-slate-200 dark:border-slate-600"
+          >{{ socialProfile.label }}</span
+        >
         <input
           v-model="socialProfileUserNames[socialProfile.key]"
-          class="input-group-field"
+          class="input-group-field ltr:rounded-l-none rtl:rounded-r-none !mb-0"
           type="text"
         />
       </div>
     </div>
-    <div class="flex flex-row justify-end gap-2 py-2 px-0 w-full">
+    <div class="flex flex-row justify-end w-full gap-2 px-0 py-2">
       <div class="w-full">
         <woot-submit-button
           :loading="inProgress"
@@ -193,12 +196,20 @@ export default {
         twitter: '',
         linkedin: '',
         github: '',
+        instagram: '',
+        line: '',
+        telegram: '',
+        website: '',
       },
       socialProfileKeys: [
-        { key: 'facebook', prefixURL: 'https://facebook.com/' },
-        { key: 'twitter', prefixURL: 'https://twitter.com/' },
-        { key: 'linkedin', prefixURL: 'https://linkedin.com/' },
-        { key: 'github', prefixURL: 'https://github.com/' },
+      	{ key: 'facebook', label: 'https://facebook.com/' },
+        { key: 'twitter', label: 'https://twitter.com/' },
+        { key: 'linkedin', label: 'https://linkedin.com/' },
+        { key: 'github', label: 'https://github.com/' },
+        { key: 'instagram', label: 'https://instagram.com/' },
+        { key: 'line', label: 'Line User Id ' },
+        { key: 'telegram', label: 'Telegram Username ' },
+        { key: 'website', label: 'Website: https://' },
       ],
     };
   },
@@ -310,6 +321,9 @@ export default {
         linkedin: socialProfiles.linkedin || '',
         github: socialProfiles.github || '',
         instagram: socialProfiles.instagram || '',
+        line: socialProfiles.line || '',
+        telegram: socialProfiles.telegram || '',
+        website: socialProfiles.website || '',
       };
     },
     getContactObject() {
@@ -416,10 +430,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.input-group-label {
-  @apply text-sm bg-slate-50 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border-slate-200 dark:border-slate-600;
-}
-
 ::v-deep {
   .multiselect .multiselect__tags .multiselect__single {
     @apply pl-0;

@@ -47,7 +47,7 @@ class Channel::Whatsapp < ApplicationRecord
   end
 
   def messaging_window_enabled?
-    true
+    provider_config['url'] == 'https://graph.facebook.com'
   end
 
   def mark_message_templates_updated
@@ -61,6 +61,9 @@ class Channel::Whatsapp < ApplicationRecord
   delegate :sync_templates, to: :provider_service
   delegate :media_url, to: :provider_service
   delegate :api_headers, to: :provider_service
+  delegate :message_path, to: :provider_service
+  delegate :message_update_payload, to: :provider_service
+  delegate :message_update_http_method, to: :provider_service
 
   private
 
@@ -70,5 +73,9 @@ class Channel::Whatsapp < ApplicationRecord
 
   def validate_provider_config
     errors.add(:provider_config, 'Invalid Credentials') unless provider_service.validate_provider_config?
+  rescue HTTParty::Error => e
+    errors.add(:provider_config, e.message)
+  rescue SocketError, Errno::ECONNREFUSED
+    errors.add(:provider_config, 'Conection refused, verify Whatsapp Cloud API URL field')
   end
 end

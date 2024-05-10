@@ -4,6 +4,7 @@ import ConversationApi from '../../../api/inbox/conversation';
 import MessageApi from '../../../api/inbox/message';
 import { MESSAGE_STATUS, MESSAGE_TYPE } from 'shared/constants/messages';
 import { createPendingMessage } from 'dashboard/helper/commons';
+import messageForwardActions from './actions/messageForwardActions';
 import {
   buildConversationList,
   isOnMentionsView,
@@ -174,10 +175,10 @@ const actions = {
     });
   },
 
-  async setActiveChat({ commit, dispatch }, { data, after }) {
+  async setActiveChat({ commit, dispatch }, { data, after, force = false }) {
     commit(types.SET_CURRENT_CHAT_WINDOW, data);
     commit(types.CLEAR_ALL_MESSAGES_LOADED);
-    if (data.dataFetched === undefined) {
+    if (data.dataFetched === undefined || force) {
       try {
         await dispatch('fetchPreviousMessages', {
           after,
@@ -468,6 +469,7 @@ const actions = {
 
   ...messageReadActions,
   ...messageTranslateActions,
+  ...messageForwardActions,
 };
 
 export default actions;

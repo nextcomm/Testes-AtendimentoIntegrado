@@ -115,4 +115,7 @@ COPY --from=pre-builder /app/.git_sha /app/.git_sha
 
 WORKDIR /app
 
+# permisos para rails
+RUN chmod -R 777 ./docker
+
 EXPOSE 3000

@@ -87,7 +87,6 @@
         <spinner color-scheme="primary" size="" />
       </div>
     </section>
-
   </main>
 </template>
 
@@ -124,6 +123,8 @@ export default {
   },
   data() {
     return {
+      // We need to initialize the component with any
+      // properties that will be used in it
       credentials: {
         email: '',
         password: '',
@@ -170,14 +171,8 @@ export default {
         this.$router.replace({ query: { ...query, error: undefined } });
       });
     }
-    if (this.$route.query.email) {
-      this.email = this.$route.query.email;
-    }
   },
   methods: {
-    updateUserEmail(email) {
-      this.email = email; // Atualize o email quando um usuário for clicado
-    },
     showAlert(message) {
       // Reset loading, current selected agent
       this.loginApi.showLoading = false;
@@ -215,10 +210,6 @@ export default {
           this.loginApi.hasErrored = true;
           this.showAlert(response?.message || this.$t('LOGIN.API.UNAUTH'));
         });
-    },
-    openLoginCard(email) {
-      this.showLoginCard = true; // Abrir o card de login quando um usuário for clicado
-      this.updateUserEmail(email); // Atualizar o email do usuário no formulário de login
     },
   },
 };
