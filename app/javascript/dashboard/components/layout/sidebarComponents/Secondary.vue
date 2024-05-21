@@ -23,6 +23,7 @@
     </transition-group>
   </div>
 </template>
+
 <script>
 import { frontendURL } from '../../../helper/URLHelper';
 import SecondaryNavItem from './SecondaryNavItem.vue';
@@ -58,7 +59,7 @@ export default {
     },
     menuConfig: {
       type: Object,
-      default: () => {},
+      default: () => ({}),
     },
     currentRole: {
       type: String,
@@ -182,12 +183,14 @@ export default {
         toState: frontendURL(`accounts/${this.accountId}/settings/teams/new`),
         toStateName: 'settings_teams_new',
         newLinkRouteName: 'settings_teams_new',
-        children: this.teams.map(team => ({
-          id: team.id,
-          label: team.name,
-          truncateLabel: true,
-          toState: frontendURL(`accounts/${this.accountId}/team/${team.id}`),
-        })),
+        children: this.teams
+          .filter(team => team.is_member) // Filtra apenas os times onde is_member é true
+          .map(team => ({
+            id: team.id,
+            label: team.name,
+            truncateLabel: true,
+            toState: frontendURL(`accounts/${this.accountId}/team/${team.id}`),
+          })),
       };
     },
     foldersSection() {

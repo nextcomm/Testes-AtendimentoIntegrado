@@ -1,14 +1,14 @@
 <template>
   <div
-    class="flex flex-col flex-shrink-0 overflow-hidden border-r conversations-list-wrap rtl:border-r-0 rtl:border-l border-slate-50 dark:border-slate-800/50"
-    :class="[
-      { hidden: !showConversationList },
-      isOnExpandedLayout ? 'basis-full' : 'flex-basis-clamp',
-    ]"
+    class="conversations-list-wrap flex-basis-clamp flex-shrink-0 overflow-hidden flex flex-col border-r rtl:border-r-0 rtl:border-l border-slate-50 dark:border-slate-800/50"
+    :class="{
+      hide: !showConversationList,
+      'list--full-width': isOnExpandedLayout,
+    }"
   >
     <slot />
     <div
-      class="flex items-center justify-between px-4 py-0"
+      class="flex items-center justify-between py-0 px-4"
       :class="{
         'pb-3 border-b border-slate-75 dark:border-slate-700':
           hasAppliedFiltersOrActiveFolders,
@@ -16,7 +16,7 @@
     >
       <div class="flex max-w-[85%] justify-center items-center">
         <h1
-          class="text-xl font-medium break-words truncate text-black-900 dark:text-slate-100"
+          class="text-xl break-words overflow-hidden whitespace-nowrap text-ellipsis text-black-900 dark:text-slate-100 mb-0"
           :title="pageTitle"
         >
           {{ pageTitle }}
@@ -29,7 +29,7 @@
         </span>
       </div>
       <div class="flex items-center gap-1">
-        <div v-if="hasAppliedFilters && !hasActiveFolders && !hideFiltersForAgents">
+        <div v-if="hasAppliedFilters && !hasActiveFolders">
           <woot-button
             v-tooltip.top-end="$t('FILTER.CUSTOM_VIEWS.ADD.SAVE_BUTTON')"
             size="tiny"
@@ -107,7 +107,7 @@
 
     <p
       v-if="!chatListLoading && !conversationList.length"
-      class="flex items-center justify-center p-4 overflow-auto"
+      class="overflow-auto p-4 flex justify-center items-center"
     >
       {{ $t('CHAT_LIST.LIST.404') }}
     </p>
@@ -127,7 +127,7 @@
     />
     <div
       ref="conversationList"
-      class="flex-1 conversations-list"
+      class="conversations-list flex-1"
       :class="{ 'overflow-hidden': isContextMenuOpen }"
     >
       <virtual-list
@@ -136,17 +136,14 @@
         :data-sources="conversationList"
         :data-component="itemComponent"
         :extra-props="virtualListExtraProps"
-        class="w-full h-full overflow-auto"
+        class="w-full overflow-auto h-full"
         footer-tag="div"
       >
         <template #footer>
           <div v-if="chatListLoading" class="text-center">
-            <span class="mt-4 mb-4 spinner" />
+            <span class="spinner mt-4 mb-4" />
           </div>
-          <p
-            v-if="showEndOfListMessage"
-            class="p-4 text-center text-slate-400 dark:text-slate-300"
-          >
+          <p v-if="showEndOfListMessage" class="text-center text-muted p-4">
             {{ $t('CHAT_LIST.EOF') }}
           </p>
           <intersection-observer
@@ -316,6 +313,7 @@ export default {
   },
   computed: {
     ...mapGetters({
+      currentUserRole: 'getCurrentRole',
       currentChat: 'getSelectedChat',
       currentUser: 'getCurrentUser',
       chatLists: 'getAllConversations',
@@ -334,35 +332,7 @@ export default {
       inboxesList: 'inboxes/getInboxes',
       campaigns: 'campaigns/getAllCampaigns',
       labels: 'labels/getLabels',
-      isFeatureEnabledonAccount: 'accounts/isFeatureEnabledonAccount',
-      currentRole: 'getCurrentRole',
-      accountId: 'getCurrentAccountId',
     }),
-    hideAllChatsForAgents() {
-      return (
-        this.isFeatureEnabledonAccount(
-          this.accountId,
-          'hide_all_chats_for_agent'
-        ) && this.currentRole !== 'administrator'
-      );
-    },
-    // Adicionar la función hideUnassignedForAgents
-    hideUnassignedForAgents() {
-      return (
-        this.isFeatureEnabledonAccount(
-          this.accountId,
-          'hide_unassigned_for_agent'
-        ) && this.currentRole !== 'administrator'
-      );
-    },
-    hideFiltersForAgents() {
-      return (
-        this.isFeatureEnabledonAccount(
-          this.accountId,
-          'hide_filters_for_agent'
-        ) && this.currentRole !== 'administrator'
-      );
-    },
     hasAppliedFilters() {
       return this.appliedFilters.length !== 0;
     },
@@ -394,17 +364,15 @@ export default {
       };
     },
     assigneeTabItems() {
+      // console.table(this.teamsList);
+      // console.table(this.currentUser);
       const ASSIGNEE_TYPE_TAB_KEYS = {
         me: 'mineCount',
-        // Ocultar la pestaña unassigned
-        //unassigned: 'unAssignedCount',
-        //all: 'allCount',
+        unassigned: 'unAssignedCount',
+        // all: 'allCount',
       };
-      // Mostrar la pestaña unassigned si se cumple la condición
-      if (!this.hideUnassignedForAgents) {
-        ASSIGNEE_TYPE_TAB_KEYS.unassigned = 'unAssignedCount';
-      }
-      if (!this.hideAllChatsForAgents) {
+      const isAvailableForTheUser = this.currentUserRole === 'administrator';
+      if (isAvailableForTheUser) {
         ASSIGNEE_TYPE_TAB_KEYS.all = 'allCount';
       }
       return Object.keys(ASSIGNEE_TYPE_TAB_KEYS).map(key => {
@@ -513,7 +481,9 @@ export default {
     conversationList() {
       let conversationList = [];
       if (!this.hasAppliedFiltersOrActiveFolders) {
+        // o n sole.log('USER:  ' + this.currentUser.role);
         const filters = this.conversationFilters;
+        // n s ole.table('FILTROS:  ', filters);
         if (this.activeAssigneeTab === 'me') {
           conversationList = [...this.mineChatsList(filters)];
         } else if (this.activeAssigneeTab === 'unassigned') {
@@ -588,7 +558,6 @@ export default {
   },
   mounted() {
     this.setFiltersFromUISettings();
-    this.initializeAccount();
     this.$store.dispatch('setChatStatusFilter', this.activeStatus);
     this.$store.dispatch('setChatSortFilter', this.activeSortBy);
     this.resetAndFetchData();
@@ -602,14 +571,6 @@ export default {
     });
   },
   methods: {
-    async initializeAccount() {
-      try {
-        const { features } = this.getAccount(this.accountId);
-        this.features = features;
-      } catch (error) {
-        // Ignore error
-      }
-    },
     updateVirtualListProps(key, value) {
       this.virtualListExtraProps = {
         ...this.virtualListExtraProps,
@@ -654,11 +615,12 @@ export default {
       this.showDeleteFoldersModal = false;
     },
     onToggleAdvanceFiltersModal() {
-      if (!this.hasAppliedFilters && !this.hasActiveFolders) {
-        this.initializeExistingFilterToModal();
+      if (this.currentUserRole === 'agent') {
+        this.showAdvancedFilters = false;
+        return;
       }
-      if (this.hasActiveFolders) {
-        this.initializeFolderToFilterModal(this.activeFolder);
+      if (!this.hasAppliedFilters) {
+        this.initializeExistingFilterToModal();
       }
       this.showAdvancedFilters = true;
     },
@@ -1079,8 +1041,22 @@ export default {
 </style>
 
 <style scoped lang="scss">
+.conversations-list-wrap {
+  &.hide {
+    @apply hidden;
+  }
+
+  &.list--full-width {
+    @apply basis-full;
+  }
+}
+
 .conversations-list {
   @apply overflow-hidden hover:overflow-y-auto;
+}
+
+.load-more--button {
+  @apply text-center rounded-none;
 }
 
 .tab--chat-type {

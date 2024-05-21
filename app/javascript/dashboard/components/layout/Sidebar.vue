@@ -81,6 +81,7 @@ export default {
       isOnChatwootCloud: 'globalConfig/isOnChatwootCloud',
       labels: 'labels/getLabelsOnSidebar',
       teams: 'teams/getMyTeams',
+      teamsList: 'teams/getTeams',
     }),
     activeCustomView() {
       if (this.activePrimaryMenu.key === 'contacts') {
@@ -108,13 +109,6 @@ export default {
     primaryMenuItems() {
       const menuItems = this.sideMenuConfig.primaryMenu;
       return menuItems.filter(menuItem => {
-        if (
-          menuItem.key === 'contacts' &&
-          this.currentRole === 'agent' &&
-          this.hideContactsForAgents
-        ) {
-          return false;
-        }
         const isAvailableForTheUser = menuItem.roles.includes(this.currentRole);
 
         if (!isAvailableForTheUser) {
@@ -152,28 +146,21 @@ export default {
         ) || {};
       return activePrimaryMenu;
     },
-    hideContactsForAgents() {
-      return (
-        this.isFeatureEnabledonAccount(
-          this.accountId,
-          'hide_contacts_for_agent'
-        ) && this.currentRole !== 'administrator'
-      );
-    },
   },
 
   watch: {
-    activeCustomView() {
-      this.fetchCustomViews();
-    },
+    // currentRole: 'redirectIfDashboard',
   },
   mounted() {
+    /*
+    this.redirectIfDashboard();
     this.$store.dispatch('labels/get');
     this.$store.dispatch('inboxes/get');
     this.$store.dispatch('notifications/unReadCount');
-    this.$store.dispatch('teams/get');
     this.$store.dispatch('attributes/get');
     this.fetchCustomViews();
+    */
+    this.$store.dispatch('teams/get');
   },
 
   methods: {
@@ -228,6 +215,14 @@ export default {
     },
     openNotificationPanel() {
       this.$emit('open-notification-panel');
+    },
+    redirectIfDashboard() {
+      if (
+        this.currentRole === 'agent' &&
+        this.$route.fullPath.includes('dashboard')
+      ) {
+        // this.$router.push(`/app/accounts/${this.accountId}/team/${this.teams[0].id}`);
+      }
     },
   },
 };

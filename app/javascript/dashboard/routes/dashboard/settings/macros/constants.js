@@ -21,7 +21,7 @@ export const MACRO_ACTION_TYPES = [
   },
   {
     key: 'remove_assigned_team',
-    label: 'Remove Assigned Team',
+    label: 'Remove Departamento',
     inputType: null,
   },
   {

@@ -69,10 +69,35 @@ export default {
 </script>
 <style lang="scss" scoped>
 .search-link {
+  background-color: #f1f5f9; // Cor de fundo mais clara para maior contraste
+  border: 2px solid #cbd5e1; // Adicionar uma borda para definição
+
   &:hover {
     .search--icon,
     .search--label {
-      @apply hover:text-woot-500 dark:hover:text-woot-500;
+      @apply text-woot-700 dark:text-woot-700;
+    }
+  }
+
+  .search--icon {
+    color: #1f2937; // Cor mais escura para o ícone
+  }
+
+  .search--label {
+    font-size: 1rem; // Aumentar o tamanho do texto
+    color: #1f2937; // Cor mais escura para o texto
+  }
+
+  &.dark {
+    background-color: #1e293b; // Cor de fundo mais escura para o tema escuro
+    border: 2px solid #374151; // Adicionar uma borda para definição no tema escuro
+
+    .search--icon {
+      color: #f8fafc; // Cor mais clara para o ícone no tema escuro
+    }
+
+    .search--label {
+      color: #f8fafc; // Cor mais clara para o texto no tema escuro
     }
   }
 }
