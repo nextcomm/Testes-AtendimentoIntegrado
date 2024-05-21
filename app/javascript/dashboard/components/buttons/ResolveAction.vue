@@ -4,7 +4,7 @@
       <woot-button
         v-if="isOpen"
         class-names="resolve"
-        color-scheme="success"
+        color-scheme="primary"
         icon="checkmark"
         emoji="✅"
         :is-loading="isLoading"
@@ -140,7 +140,7 @@ export default {
     },
     buttonClass() {
       if (this.isPending) return 'primary';
-      if (this.isOpen) return 'success';
+      if (this.isOpen) return 'primary';
       if (this.isResolved) return 'warning';
       return '';
     },
