@@ -23,12 +23,10 @@
         :is-active="showBlankCard"
         @toggle-card="toggleBlankCard"
       />
-      <!--
       <TypebotModal
         :is-active="showBlankCard"
         @toggle-card="toggleBlankCard"
       />
-      -->
       <!--
       <Kuma
         :is-active="showBlankCard"
@@ -63,7 +61,7 @@ import Logo from './Logo.vue';
 import PrimaryNavItem from './PrimaryNavItem.vue';
 import OptionsMenu from './OptionsMenu.vue';
 import SwitchUserCard from './SwitchUserCard.vue';
-// import TypebotModal from './TybebotModal.vue';
+import TypebotModal from './TybebotModal.vue';
 // import Kuma from './Kuma.vue';
 import AgentDetails from './AgentDetails.vue';
 import NotificationBell from './NotificationBell.vue';
@@ -74,6 +72,7 @@ import { mapGetters } from 'vuex';
 export default {
   components: {
     Logo,
+    TypebotModal,
     PrimaryNavItem,
     OptionsMenu,
     AgentDetails,
