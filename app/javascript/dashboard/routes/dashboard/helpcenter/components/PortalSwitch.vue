@@ -16,7 +16,7 @@
           v-if="active"
           variant="smooth"
           size="small"
-          color-scheme="success"
+          color-scheme="primary"
           :title="$t('HELP_CENTER.PORTAL.ACTIVE_BADGE')"
         />
       </header>

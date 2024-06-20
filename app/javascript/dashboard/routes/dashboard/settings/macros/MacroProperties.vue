@@ -74,7 +74,7 @@
     <div class="mt-auto w-full">
       <woot-button
         size="expanded"
-        color-scheme="success"
+        color-scheme="primary"
         class="w-full"
         @click="$emit('submit')"
       >

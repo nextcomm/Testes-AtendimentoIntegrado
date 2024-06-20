@@ -1,8 +1,7 @@
 <template>
   <div class="-mt-px text-sm">
     <button
-      class="flex items-center select-none w-full rounded-none bg-slate-50 dark:bg-slate-800 border border-l-0 border-r-0 border-solid m-0 border-slate-100 dark:border-slate-700/50 cursor-grab justify-between py-2 px-4 drag-handle"
-      @click="$emit('click')"
+      class="flex items-center select-none w-full rounded-none bg-slate-50 dark:bg-slate-800 border border-l-0 border-r-0 border-solid m-0 border-slate-100 dark:border-slate-700/50 cursor-default justify-between py-2 px-4"
     >
       <div class="flex justify-between mb-0.5">
         <emoji-or-icon class="inline-block w-5" :icon="icon" :emoji="emoji" />
@@ -12,19 +11,16 @@
           {{ title }}
         </h5>
       </div>
-      <div class="flex flex-row">
-        <slot name="button" />
-        <div class="flex justify-end w-3 text-woot-500">
-          <fluent-icon v-if="isOpen" size="24" icon="subtract" type="solid" />
-          <fluent-icon v-else size="24" icon="add" type="solid" />
+      <!--
+        <div class="flex flex-row">
+          <slot name="button" />
+          <div class="flex justify-end w-3 text-woot-500">
+            <fluent-icon size="24" icon="subtract" type="solid" />
+          </div>
         </div>
-      </div>
+      -->
     </button>
-    <div
-      v-if="isOpen"
-      class="bg-white dark:bg-slate-900"
-      :class="compact ? 'p-0' : 'p-4'"
-    >
+    <div class="bg-white dark:bg-slate-900" :class="compact ? 'p-0' : 'p-4'">
       <slot />
     </div>
   </div>
@@ -53,10 +49,6 @@ export default {
     emoji: {
       type: String,
       default: '',
-    },
-    isOpen: {
-      type: Boolean,
-      default: true,
     },
   },
 };
