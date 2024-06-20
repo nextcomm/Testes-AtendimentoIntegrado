@@ -61,7 +61,7 @@ import Logo from './Logo.vue';
 import PrimaryNavItem from './PrimaryNavItem.vue';
 import OptionsMenu from './OptionsMenu.vue';
 import SwitchUserCard from './SwitchUserCard.vue';
-import TypebotModal from './TybebotModal.vue';
+import TypebotModal from './TypebotModal.vue';
 // import Kuma from './Kuma.vue';
 import AgentDetails from './AgentDetails.vue';
 import NotificationBell from './NotificationBell.vue';
